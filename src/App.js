@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Page from './Page';
-import { tsConstructorType } from '@babel/types';
+import MsApi from './MsApi';
 
 class App extends Component {
   constructor(props) {
@@ -27,20 +27,34 @@ class App extends Component {
   }
 
   render () {
-    return (
-      <div className="App">
-        <Page pageNumber={this.state.current}></Page>
-        <div style={{position: "absolute", top: '0px', left: '0px'}}>
-          <input 
-            type="text" 
-            value={Number(this.state.current)} 
-            onChange={ this.handleChange.bind(this) } 
-            placeholder="Write a page number..." />
-          <button onClick={this.handlePrev.bind(this)}>prev</button>
-          <button onClick={this.handleNext.bind(this)}>next</button>
+    if (window.location.pathname === '/msapi') {
+      /**
+       * Test MicroSoft API.
+       */
+      return (
+        <div className="App">
+          <MsApi></MsApi>
         </div>
-      </div>
-    );
+      );
+    } else {
+      /**
+       * Main Application.
+       */
+      return (
+        <div className="App">
+          <Page pageNumber={this.state.current}></Page>
+          <div style={{position: "absolute", top: '0px', left: '0px'}}>
+            <input 
+              type="text" 
+              value={Number(this.state.current)} 
+              onChange={ this.handleChange.bind(this) } 
+              placeholder="Write a page number..." />
+            <button onClick={this.handlePrev.bind(this)}>prev</button>
+            <button onClick={this.handleNext.bind(this)}>next</button>
+          </div>
+        </div>
+      );
+    }
   }
 }
 

@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@microsoft/microsoft-graph-client": "^1.6.0",
+    "msal": "^0.2.4",
     "pdfjs-dist": "^2.0.943",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
