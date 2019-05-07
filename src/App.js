@@ -1,26 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
+import Page from './Page';
+import { tsConstructorType } from '@babel/types';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      current: 0,
+    };
+  }
+  
+  handleChange(e) {
+    console.log('App#handleChange %o', e.target.value);
+    this.setState({ current: Number(e.target.value) });
+  }
+
+  handlePrev(e) {
+    console.log('App#handlePrev %o', e);
+    this.setState({ current: this.state.current - 1 });
+  }
+
+  handleNext(e) {
+    console.log('App#handleNext %o', e);
+    this.setState({ current: this.state.current + 1 });
+  }
+
+  render () {
+    return (
+      <div className="App">
+        <Page pageNumber={this.state.current}></Page>
+        <div style={{position: "absolute", top: '0px', left: '0px'}}>
+          <input 
+            type="text" 
+            value={Number(this.state.current)} 
+            onChange={ this.handleChange.bind(this) } 
+            placeholder="Write a page number..." />
+          <button onClick={this.handlePrev.bind(this)}>prev</button>
+          <button onClick={this.handleNext.bind(this)}>next</button>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default App;
