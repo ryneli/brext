@@ -61,8 +61,7 @@ class MsApi extends Component {
     render() {
         return (
             <div>
-            <h2>Welcome to MSAL.js Quickstart</h2><br></br>
-            <h4 id="WelcomeMessage"></h4>
+            <h2>Download OneNote pages which title starts with [Aa]rtifex</h2><br></br>
             <button id="SignIn" onClick={msApiListPages}>Download Pages</button><br/><br/>
             <pre id="json"></pre>
             </div>

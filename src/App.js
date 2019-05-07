@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Page from './Page';
 import MsApi from './MsApi';
+import {RootPath} from './AppState';
 
 class App extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ class App extends Component {
   }
 
   render () {
-    if (window.location.pathname === '/msapi') {
+    if (window.location.pathname === RootPath + 'msapi') {
       /**
        * Test MicroSoft API.
        */

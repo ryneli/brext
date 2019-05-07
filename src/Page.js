@@ -1,15 +1,12 @@
 import React, { Component } from 'react';
 import './Page.css';
+import {RootPath} from './AppState';
 var PDFJS = require('pdfjs-dist');
 
 /**
  * Github service and local service have different path.
  */
-if (window.location.hostname === 'localhost') {
-    PDFJS.GlobalWorkerOptions.workerSrc = '/pdf.worker.js';
-} else {
-    PDFJS.GlobalWorkerOptions.workerSrc = '/brext/pdf.worker.js';
-}
+PDFJS.GlobalWorkerOptions.workerSrc = RootPath + 'pdf.worker.js';
 
 var url = 'https://zhenqiang.li/pdf/zaijidulizhangjin.pdf',
     targetElement = null,
