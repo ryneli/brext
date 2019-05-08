@@ -8,7 +8,7 @@ const clientId = "aa31273b-0fc3-43c3-8abe-08f3234d2e33"; // Client Id of the reg
 const callback = (errorDesc, token, error, tokenType) => {};
 // An Optional options for initializing the MSAL @see https://github.com/AzureAD/microsoft-authentication-library-for-js/wiki/MSAL-basics#configuration-options
 const options = {
-	redirectUri: window.location.origin,
+	redirectUri: window.location.href,
 };
 const graphScopes = ["user.read", "mail.send", "notes.read"]; // An array of graph scopes
 
