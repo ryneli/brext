@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "ee3cf4c03f32449bc2b80209d7f0f193",
+    "revision": "64e2871908a30afc9ea5cc25fad5a679",
     "url": "/brext/index.html"
   },
   {
