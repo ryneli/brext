@@ -20,15 +20,87 @@ const clientOptions = {
 };
 const client = Client.initWithMiddleware(clientOptions);
 
+/**
+ * 
+ * @param {*} prefix The prefix of saved file name
+ * @param {*} content The content of multipart mime type content
+ * 
+ * Eg:
+ *  ../public/onenote-page.txt
+ */
+function splitMultipart(prefix, content) {
+   const lines = content.split('\n');
+   
+   let subfileIndex = 0;
+   let subfileContent = '';
+   const boundry = lines[0].slice(0, -1);
+   for (let i = 3; i < lines.length; i++) {
+       if (lines[i].startsWith(boundry)) {
+            saveFileLocally(prefix + '_' + subfileIndex, subfileContent);
+            
+            // skip next line because it is content type
+            i++;
+            if (i < lines.length) {
+                subfileIndex += 1;
+                subfileContent = '';
+            }
+            // skip next line since it is a whitespace
+            i++;
+       } else {
+            subfileContent += lines[i] + '\n';
+       }
+   }
+}
+
+/**
+ * Decode text and inkML from input string.
+ */
+function decodeXmlFile(content) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, "application/xml");
+    // decode ink stroke
+    if (doc.children[0].tagName === 'inkml:ink') {
+        const strokeStrings = Array.from(doc.getElementsByTagName('inkml:trace'))
+            .map((el) => el.textContent.trim());
+        strokeStrings.forEach((strokeString) => decodeStrokeString(strokeString));
+    // decode textbox
+    } else if (doc.children[0].tagName === 'html') {
+        Array.from(doc.getElementsByTagName('div')).map((el) => decodeTextbox(el));
+    }
+}
+
+function decodeStrokeString(strokeString) {
+    const points = strokeString.split(', ').map((pointString) => {
+        const ps = pointString.split(' ');
+        return {
+            x: Number(ps[0]),
+            y: Number(ps[1])
+        };
+    });
+    console.log('MsApi#decodeStrokeString %o', points);
+}
+
+function decodeTextbox(divEl) {
+    // treat all text as one string.
+    const text = divEl.textContent.trim();
+
+    // decode DIV element style string
+    const styles = divEl.attributes.style.value.split(';').reduce((acc, s) => {
+        const kv = s.split(':');
+        acc[kv[0]] = kv[1];
+        return acc;
+    }, {});
+    console.log('MsApi#decodeTextbox %o %o', text, styles);
+}
+
 function saveFileLocally(filename, content) {
     /*
     * Save a text file locally with a filename by triggering a download
     */
-
     const blob = new Blob([content], { type: 'text/plain' });
     const anchor = document.createElement('a');
 
-    anchor.download = `${filename}.txt`;
+    anchor.download = `${filename}.html`;
     anchor.href = (window.webkitURL || window.URL).createObjectURL(blob);
     anchor.dataset.downloadurl = ['text/plain', anchor.download, anchor.href].join(':');
     anchor.click();
@@ -37,7 +109,6 @@ function saveFileLocally(filename, content) {
 async function msApiGetPageContent(pageId) {
     let response = await client.api(`/me/onenote/pages/${pageId}/content?includeinkML=true`).get();
     fetchStream(pageId, response);
-    console.log('msApiGetPageContent %o', response);
 }
 
 function fetchStream(pageId, stream) {
@@ -53,7 +124,7 @@ function fetchStream(pageId, stream) {
       // value - some data. Always undefined when done is true.
       if (done) {
         console.log("Stream complete");
-        saveFileLocally(pageId, result);
+        splitMultipart(pageId, result);
         return;
       }
   
