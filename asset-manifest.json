@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/brext/static/css/main.64908277.chunk.css",
-    "main.js": "/brext/static/js/main.f9510b13.chunk.js",
-    "main.js.map": "/brext/static/js/main.f9510b13.chunk.js.map",
+    "main.js": "/brext/static/js/main.aa38324a.chunk.js",
+    "main.js.map": "/brext/static/js/main.aa38324a.chunk.js.map",
     "runtime~main.js": "/brext/static/js/runtime~main.eac97156.js",
     "runtime~main.js.map": "/brext/static/js/runtime~main.eac97156.js.map",
     "static/js/2.d3b2bd23.chunk.js": "/brext/static/js/2.d3b2bd23.chunk.js",
     "static/js/2.d3b2bd23.chunk.js.map": "/brext/static/js/2.d3b2bd23.chunk.js.map",
     "index.html": "/brext/index.html",
-    "precache-manifest.d144a6fbdb9eefab78d204dca92cbdaa.js": "/brext/precache-manifest.d144a6fbdb9eefab78d204dca92cbdaa.js",
+    "precache-manifest.c432a7d181cd89148d1c5b19ec6b06fd.js": "/brext/precache-manifest.c432a7d181cd89148d1c5b19ec6b06fd.js",
     "service-worker.js": "/brext/service-worker.js",
     "static/css/main.64908277.chunk.css.map": "/brext/static/css/main.64908277.chunk.css.map"
   }

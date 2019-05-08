@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/brext/precache-manifest.d144a6fbdb9eefab78d204dca92cbdaa.js"
+  "/brext/precache-manifest.c432a7d181cd89148d1c5b19ec6b06fd.js"
 );
 
 self.addEventListener('message', (event) => {
