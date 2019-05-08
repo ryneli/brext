@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Page from './Page';
-import MsApi from './MsApi';
+import MsApi, {msApiUploadFile, msApiUpdateFile, msApiDownloadFile} from './MsApi';
 import {RootPath} from './AppState';
 
 class App extends Component {
@@ -52,6 +52,9 @@ class App extends Component {
               placeholder="Write a page number..." />
             <button onClick={this.handlePrev.bind(this)}>prev</button>
             <button onClick={this.handleNext.bind(this)}>next</button>
+            <button onClick={msApiUploadFile}>test msapi uploadfile</button>
+            <button onClick={msApiUpdateFile}>test msapi updatefile</button>
+            <button onClick={msApiDownloadFile}>test msapi downloadfile</button>
           </div>
         </div>
       );

@@ -10,7 +10,7 @@ const callback = (errorDesc, token, error, tokenType) => {};
 const options = {
 	redirectUri: window.location.href,
 };
-const graphScopes = ["user.read", "mail.send", "notes.read"]; // An array of graph scopes
+const graphScopes = ["user.read", "mail.send", "notes.read", "Files.ReadWrite.All"]; // An array of graph scopes
 
 // Initialize the MSAL @see https://github.com/AzureAD/microsoft-authentication-library-for-js/wiki/MSAL-basics#initialization-of-msal
 const userAgentApplication = new UserAgentApplication(clientId, undefined, callback, options);
@@ -37,7 +37,7 @@ function splitMultipart(prefix, content) {
    for (let i = 3; i < lines.length; i++) {
        if (lines[i].startsWith(boundry)) {
             saveFileLocally(prefix + '_' + subfileIndex, subfileContent);
-            
+
             // skip next line because it is content type
             i++;
             if (i < lines.length) {
@@ -154,6 +154,65 @@ async function msApiListPages(prefix) {
     return ids;
 }
 
+async function msApiUploadFile() {
+    try {
+        let response = await client.api("/me/drive/root:/BrExt/test.txt:/content").put('Test content');
+        console.log(response);
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function msApiUpdateFile() {
+    try {
+        let response = await client.api("/me/drive/items/FC828B91B3B5D79!5136/content").put('Test update');
+        console.log(response);
+    } catch (error) {
+        throw error;
+    }
+}
+
+function readFromReadableStream(stream) {
+    const reader = stream.getReader();
+    let charsReceived = 0;
+    let result = '';
+  
+    // read() returns a promise that resolves
+    // when a value has been received
+    reader.read().then(function processText({ done, value }) {
+      // Result objects contain two properties:
+      // done  - true if the stream has already given you all its data.
+      // value - some data. Always undefined when done is true.
+      if (done) {
+        console.log("Stream complete %o", result);
+        return;
+      }
+  
+      // value for fetch streams is a Uint8Array
+      charsReceived += value.length;
+      const chunk = value;
+  
+      result += new TextDecoder("utf-8").decode(chunk);
+  
+      // Read some more, and call this function again
+      return reader.read().then(processText);
+    });
+  }
+
+async function msApiDownloadFile() {
+    try {
+        // https://docs.microsoft.com/en-us/onedrive/developer/rest-api/concepts/working-with-cors?view=odsp-graph-online#example
+        const response = await client.api("/me/drive/items/FC828B91B3B5D79!5136??select=id,@microsoft.graph.downloadUrl").get();
+        const downloadableUrl = response['@microsoft.graph.downloadUrl'];
+        console.log(downloadableUrl);
+        fetch(downloadableUrl).then((res) => {
+            readFromReadableStream(res.body);
+        });
+    } catch (error) {
+        throw error;
+    }
+}
+
 class MsApi extends Component {
     
 
@@ -183,4 +242,5 @@ class MsApi extends Component {
     }
 }
 
+export {msApiUploadFile, msApiUpdateFile, msApiDownloadFile};
 export default MsApi;
