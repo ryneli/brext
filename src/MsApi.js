@@ -28,17 +28,45 @@ function saveFileLocally(filename, content) {
     const blob = new Blob([content], { type: 'text/plain' });
     const anchor = document.createElement('a');
 
-    anchor.download = `${filename}.html`;
+    anchor.download = `${filename}.txt`;
     anchor.href = (window.webkitURL || window.URL).createObjectURL(blob);
     anchor.dataset.downloadurl = ['text/plain', anchor.download, anchor.href].join(':');
     anchor.click();
 }
 
 async function msApiGetPageContent(pageId) {
-    let response = await client.api(`/me/onenote/pages/${pageId}/content`).get();
+    let response = await client.api(`/me/onenote/pages/${pageId}/content?includeinkML=true`).get();
+    fetchStream(pageId, response);
     console.log('msApiGetPageContent %o', response);
-    saveFileLocally(pageId, response.documentElement.outerHTML);
 }
+
+function fetchStream(pageId, stream) {
+    const reader = stream.getReader();
+    let charsReceived = 0;
+    let result = '';
+  
+    // read() returns a promise that resolves
+    // when a value has been received
+    reader.read().then(function processText({ done, value }) {
+      // Result objects contain two properties:
+      // done  - true if the stream has already given you all its data.
+      // value - some data. Always undefined when done is true.
+      if (done) {
+        console.log("Stream complete");
+        saveFileLocally(pageId, result);
+        return;
+      }
+  
+      // value for fetch streams is a Uint8Array
+      charsReceived += value.length;
+      const chunk = value;
+  
+      result += new TextDecoder("utf-8").decode(chunk);
+  
+      // Read some more, and call this function again
+      return reader.read().then(processText);
+    });
+  }
 
 async function msApiListPages(prefix) {
     const ids = [];
@@ -61,9 +89,24 @@ class MsApi extends Component {
     render() {
         return (
             <div>
-            <h2>Download OneNote pages which title starts with [Aa]rtifex</h2><br></br>
-            <button id="SignIn" onClick={msApiListPages}>Download Pages</button><br/><br/>
-            <pre id="json"></pre>
+            <h2>Download OneNote pages</h2><br></br>
+            <ul style={{textAlign: "left"}}> 
+                <li>Click following button to download all OneNote pages which title starts with [Aa]tifex. </li>
+                <li>Check <a href="https://www.w3.org/TR/InkML/">inkML</a> for standard </li>
+                <li>Check <a href="https://github.com/microsoft/InkMLjs">inkMLjs</a> for JavaScript render implementation</li>
+                <li> Example
+                    <ul>
+                        <li>
+                            Response data from Graph API, <a href='https://zhenqiang.li/brext/onenote-page.txt'>link</a>
+                        </li>
+                        <li>
+                            Rendered view in OneNote, <a href='https://zhenqiang.li/brext/onenote-page.png'>link</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <button onClick={msApiListPages}>start</button><br/><br/>
             </div>
             );
     }
