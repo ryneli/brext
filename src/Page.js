@@ -43,8 +43,8 @@ class Page extends Component {
                 const widthRatio = targetRect.width / viewport.width;
                 const heightRatio = targetRect.height / viewport.height;
                 viewport = page.getViewport(Math.min(widthRatio, heightRatio));
-                canvas.height = viewport.height;
                 canvas.width = viewport.width;
+                canvas.height = viewport.height;
                 console.log('renderPage done %o %o %o %o => init canvas', targetElement, page, canvas, viewport);
             
                 // Render PDF page into canvas context
@@ -70,7 +70,9 @@ class Page extends Component {
     render() {
         this.setBackground();
         return (
-        <div className='paper' 
+        <div className='paper'
+            id={'page' + this.props.pageNumber} 
+            ref={this.pageBg}
             style={{
                 fontSize: '40px', 
                 position: 'absolute',
@@ -78,10 +80,6 @@ class Page extends Component {
                 left: '0px', 
                 width: '100%', 
                 height: '100%'}}>
-            <div id={'page' + this.props.pageNumber} ref={this.pageBg}
-                style={{
-                    width: '100%', 
-                    height: '100%'}}></div>
         </div>);
     }
 }
