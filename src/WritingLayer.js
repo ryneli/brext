@@ -11,7 +11,7 @@ class Drawable {
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         this.path.setAttribute('stroke', 'black');
         this.path.setAttribute('fill', 'none');
-        this.path.setAttribute('stroke-width', '3');
+        this.path.setAttribute('stroke-width', '2');
         this.d = '';
     }
 
@@ -55,7 +55,7 @@ class WritingLayer extends Component {
     initPointerListeners(element) {
         element.addEventListener("touchstart", (e) => {
             console.log('touchstart %o', e);
-            const rect = e.srcElement.getBoundingClientRect();
+            const rect = element.getBoundingClientRect();
             const touch = e.touches[0];
             this.startAction(
                 touch.clientX - rect.left, 
@@ -65,7 +65,7 @@ class WritingLayer extends Component {
             e.stopPropagation();
         });
         element.addEventListener("touchmove", (e) => {
-            const rect = e.srcElement.getBoundingClientRect();
+            const rect = element.getBoundingClientRect();
             const touch = e.touches[0];
             this.updateAction(
                 touch.clientX - rect.left, 
@@ -75,7 +75,7 @@ class WritingLayer extends Component {
             e.stopPropagation();
         });
         element.addEventListener("touchend", (e) => {
-            const rect = e.srcElement.getBoundingClientRect();
+            const rect = element.getBoundingClientRect();
             const touch = e.touches[0];
             this.endAction(-1, -1, 'unknown');
             e.preventDefault();

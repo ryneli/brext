@@ -1,4 +1,9 @@
 export let RootPath = '/';
-if (window.location.hostname !== 'localhost') {
+
+/**
+ * Local service will use http protocal. 
+ * If local service, change root path
+ */
+if (window.location.protocol !== 'http:') {
     RootPath += 'brext/';
 }
