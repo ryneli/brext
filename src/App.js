@@ -3,19 +3,39 @@ import './App.css';
 import Page from './Page';
 import MsApi, {msApiUploadFile, msApiUpdateFile, msApiDownloadFile} from './MsApi';
 import {RootPath} from './AppState';
+import PdfjsWrapper from './PdfjsWrapper';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       current: 0,
+      canvas: null,
       scale: 1.0,
+      pdfjsWrapper: new PdfjsWrapper(),
     };
   }
+
+  loadPage() {
+    this.state.pdfjsWrapper.getPageAsImg('https://zhenqiang.li/pdf/zaijidulizhangjin.pdf', this.state.current).then((canvas) => {
+      this.setState({canvas: canvas});
+    });
+  }
   
-  handleChange(e) {
-    console.log('App#handleChange %o', e.target.value);
+  handlePageChange(e) {
+    console.log('App#handlePageChange %o', e.target.value);
     this.setState({ current: Number(e.target.value) });
+    this.loadPage(this.state.current, () => this.loadPage());
+  }
+
+  handlePagePrev(e) {
+    console.log('App#handlePagePrev %o', e);
+    this.setState({ current: this.state.current - 1 }, () => this.loadPage());
+  }
+
+  handlePageNext(e) {
+    console.log('App#handlePageNext %o', e);
+    this.setState({ current: this.state.current + 1 }, () => this.loadPage());
   }
 
   handleScaleChange(e) {
@@ -29,16 +49,6 @@ class App extends Component {
 
   handleScaleUp() {
     this.setState({ scale: this.state.scale + 0.1 });
-  }
-
-  handlePrev(e) {
-    console.log('App#handlePrev %o', e);
-    this.setState({ current: this.state.current - 1 });
-  }
-
-  handleNext(e) {
-    console.log('App#handleNext %o', e);
-    this.setState({ current: this.state.current + 1 });
   }
 
   render () {
@@ -57,15 +67,15 @@ class App extends Component {
        */
       return (
         <div className="App">
-          <Page pageNumber={this.state.current} scale={this.state.scale}></Page>
+          <Page canvas={this.state.canvas} scale={this.state.scale}></Page>
           <div style={{position: "absolute", top: '0px', left: '0px'}}>
             <input 
               type="text" 
               value={Number(this.state.current)} 
-              onChange={ this.handleChange.bind(this) } 
+              onChange={ this.handlePageChange.bind(this) } 
               placeholder="Write a page number..." />
-            <button onClick={this.handlePrev.bind(this)}>prev</button>
-            <button onClick={this.handleNext.bind(this)}>next</button>
+            <button onClick={this.handlePagePrev.bind(this)}>prev</button>
+            <button onClick={this.handlePageNext.bind(this)}>next</button>
             <input 
               type="text" 
               value={Number(this.state.scale)} 
@@ -73,9 +83,6 @@ class App extends Component {
               placeholder="Write a scale number..." />
             <button onClick={this.handleScaleDown.bind(this)}>Scale-</button>
             <button onClick={this.handleScaleUp.bind(this)}>Scale+</button>
-            <button onClick={msApiUploadFile}>MsapiUpload</button>
-            <button onClick={msApiUpdateFile}>MsapiUpdate</button>
-            <button onClick={msApiDownloadFile}>MsapiDownload</button>
           </div>
         </div>
       );
