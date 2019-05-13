@@ -9,12 +9,26 @@ class App extends Component {
     super(props);
     this.state = {
       current: 0,
+      scale: 1.0,
     };
   }
   
   handleChange(e) {
     console.log('App#handleChange %o', e.target.value);
     this.setState({ current: Number(e.target.value) });
+  }
+
+  handleScaleChange(e) {
+    console.log('App#handleScaleChange %o', e.target.value);
+    this.setState({ scale: Number(e.target.value) });
+  }
+
+  handleScaleDown() {
+    this.setState({ scale: this.state.scale - 0.1 });
+  }
+
+  handleScaleUp() {
+    this.setState({ scale: this.state.scale + 0.1 });
   }
 
   handlePrev(e) {
@@ -43,7 +57,7 @@ class App extends Component {
        */
       return (
         <div className="App">
-          <Page pageNumber={this.state.current}></Page>
+          <Page pageNumber={this.state.current} scale={this.state.scale}></Page>
           <div style={{position: "absolute", top: '0px', left: '0px'}}>
             <input 
               type="text" 
@@ -52,9 +66,16 @@ class App extends Component {
               placeholder="Write a page number..." />
             <button onClick={this.handlePrev.bind(this)}>prev</button>
             <button onClick={this.handleNext.bind(this)}>next</button>
-            <button onClick={msApiUploadFile}>test msapi uploadfile</button>
-            <button onClick={msApiUpdateFile}>test msapi updatefile</button>
-            <button onClick={msApiDownloadFile}>test msapi downloadfile</button>
+            <input 
+              type="text" 
+              value={Number(this.state.scale)} 
+              onChange={ this.handleScaleChange.bind(this) } 
+              placeholder="Write a scale number..." />
+            <button onClick={this.handleScaleDown.bind(this)}>Scale-</button>
+            <button onClick={this.handleScaleUp.bind(this)}>Scale+</button>
+            <button onClick={msApiUploadFile}>MsapiUpload</button>
+            <button onClick={msApiUpdateFile}>MsapiUpdate</button>
+            <button onClick={msApiDownloadFile}>MsapiDownload</button>
           </div>
         </div>
       );
