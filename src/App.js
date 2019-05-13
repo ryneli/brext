@@ -4,6 +4,7 @@ import Page from './Page';
 import MsApi, {msApiUploadFile, msApiUpdateFile, msApiDownloadFile} from './MsApi';
 import {RootPath} from './AppState';
 import PdfjsWrapper from './PdfjsWrapper';
+import WritingLayer from './WritingLayer';
 
 class App extends Component {
   constructor(props) {
@@ -68,6 +69,7 @@ class App extends Component {
       return (
         <div className="App">
           <Page canvas={this.state.canvas} scale={this.state.scale}></Page>
+          <WritingLayer></WritingLayer>
           <div style={{position: "absolute", top: '0px', left: '0px'}}>
             <input 
               type="text" 
