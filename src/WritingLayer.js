@@ -40,6 +40,18 @@ class WritingLayer extends Component {
         this.writingCanvas = React.createRef();
         this.currentActioner = null;
     }
+
+    getTouchType(inType) {
+        switch(inType) {
+            case 'direct':
+                return 'touch';
+            case 'stylus':
+                return 'pen';
+            default:
+                return inType;
+        }
+    }
+
     initPointerListeners(element) {
         element.addEventListener("touchstart", (e) => {
             console.log('touchstart %o', e);
@@ -109,8 +121,10 @@ class WritingLayer extends Component {
     }
 
     startAction(x, y, touchType) {
-        if (this.currentActioner) {
-            this.currentActioner.startAction(x, y);
+        if (touchType !== 'touch') {
+            if (this.currentActioner) {
+                this.currentActioner.startAction(x, y);
+            }
         }
     }
     updateAction(x, y, touchType) {
