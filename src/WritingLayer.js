@@ -20,12 +20,16 @@ class Drawable {
         this.initPath();
         this.d = `M ${x} ${y}`;
         this.svg.append(this.path);
+        this.previousPoint = {x, y};
     }
 
     updateAction(x, y) {
-        if (this.d.startsWith('M')) {
-            this.d = `${this.d} L ${x} ${y}`;
+        if (this.previousPoint && this.d.startsWith('M')) {
+            this.d = `${this.d} C ${x} ${y} 
+                        ${this.previousPoint.x} ${this.previousPoint.y}
+                        ${(x + this.previousPoint.x)/2} ${(y + this.previousPoint.y)/2} `;
             this.path.setAttribute('d', `${this.d}`);
+            this.previousPoint = {x, y};
         }
     }
 
