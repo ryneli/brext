@@ -4,17 +4,21 @@ import Page from './Page';
 import MsApi, {msApiUploadFile, msApiUpdateFile, msApiDownloadFile} from './MsApi';
 import {RootPath} from './AppState';
 import PdfjsWrapper from './PdfjsWrapper';
-import WritingLayer from './WritingLayer';
+import * as Model from './Model';
+import Board from './Board';
+var defaultBoard = require('./defaultBoard.json');
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      current: 0,
+      current: 1,
       canvas: null,
       scale: 1.0,
       pdfjsWrapper: new PdfjsWrapper(),
     };
+
+    this.board = new Model.Board(defaultBoard);
   }
 
   loadPage() {
@@ -23,33 +27,20 @@ class App extends Component {
     });
   }
   
-  handlePageChange(e) {
-    console.log('App#handlePageChange %o', e.target.value);
-    this.setState({ current: Number(e.target.value) });
-    this.loadPage(this.state.current, () => this.loadPage());
-  }
-
-  handlePagePrev(e) {
-    console.log('App#handlePagePrev %o', e);
-    this.setState({ current: this.state.current - 1 }, () => this.loadPage());
-  }
-
-  handlePageNext(e) {
-    console.log('App#handlePageNext %o', e);
-    this.setState({ current: this.state.current + 1 }, () => this.loadPage());
-  }
-
   handleScaleChange(e) {
     console.log('App#handleScaleChange %o', e.target.value);
-    this.setState({ scale: Number(e.target.value) });
+    this.board.viewport.transform.scaleX = Number(e.target.value);
+    this.setState({ board: this.board });
   }
 
   handleScaleDown() {
-    this.setState({ scale: this.state.scale - 0.1 });
+    this.board.viewport.transform.scaleX = this.board.viewport.transform.scaleX - 0.1;
+    this.setState({ board: this.board });
   }
 
   handleScaleUp() {
-    this.setState({ scale: this.state.scale + 0.1 });
+    this.board.viewport.transform.scaleX = this.board.viewport.transform.scaleX + 0.1;
+    this.setState({ board: this.board });
   }
 
   render () {
@@ -68,19 +59,11 @@ class App extends Component {
        */
       return (
         <div className="App">
-          <Page canvas={this.state.canvas} scale={this.state.scale}></Page>
-          <WritingLayer></WritingLayer>
+          <Board data={this.board}></Board>
           <div style={{position: "absolute", top: '0px', left: '0px'}}>
             <input 
               type="text" 
-              value={Number(this.state.current)} 
-              onChange={ this.handlePageChange.bind(this) } 
-              placeholder="Write a page number..." />
-            <button onClick={this.handlePagePrev.bind(this)}>prev</button>
-            <button onClick={this.handlePageNext.bind(this)}>next</button>
-            <input 
-              type="text" 
-              value={Number(this.state.scale)} 
+              value={this.board.viewport.transform.scaleX} 
               onChange={ this.handleScaleChange.bind(this) } 
               placeholder="Write a scale number..." />
             <button onClick={this.handleScaleDown.bind(this)}>Scale-</button>

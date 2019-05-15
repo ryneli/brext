@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import * as Model from './Model';
 import './WritingLayer.css';
 
 class Drawable {
@@ -43,6 +44,7 @@ class WritingLayer extends Component {
         super(props);
         this.writingCanvas = React.createRef();
         this.currentActioner = null;
+        this.writing = new Model.Writing({});
     }
 
     getTouchType(inType) {
@@ -61,6 +63,7 @@ class WritingLayer extends Component {
             console.log('touchstart %o', e);
             const rect = element.getBoundingClientRect();
             const touch = e.touches[0];
+            console.log('WritingLayer#touchStart $o', point);
             this.startAction(
                 touch.clientX - rect.left, 
                 touch.clientY - rect.top, 
@@ -150,7 +153,7 @@ class WritingLayer extends Component {
 
     render() {
         return (
-        <div style={{position: 'absolute', width: '100%', height: '100%'}}>
+        <div style={{width: '100%', height: '100%'}}>
             <svg ref={this.writingCanvas}  style={{width: '100%', height: '100%'}}></svg>
         </div>);
     }

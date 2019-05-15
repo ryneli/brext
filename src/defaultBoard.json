@@ -1,0 +1,65 @@
+{
+    "id": "board-001",
+    "viewport": {
+        "transform": {
+            "shiftX": 0,
+            "shiftY": 0,
+            "scaleX": 2,
+            "scaleY": 2
+        },
+        "size": {
+            "width": 400,
+            "height": 400
+        }
+    },
+    "pages": [
+        {
+            "size": {
+                "width": 360,
+                "height": 500
+            },
+            "transform": {
+                "shiftX": 0,
+                "shiftY": 0,
+                "scaleX": 0,
+                "scaleY": 0
+            },
+            "id": "page-001",
+            "type": "pdf",
+            "contentUrl": "https://zhenqiang.li/pdf/zaijidulizhangjin.pdf",
+            "pageNumber": 10
+        },
+        {
+            "size": {
+                "width": 360,
+                "height": 500
+            },
+            "transform": {
+                "shiftX": 370,
+                "shiftY": 0,
+                "scaleX": 0,
+                "scaleY": 0
+            },
+            "id": "page-002",
+            "type": "pdf",
+            "contentUrl": "https://zhenqiang.li/pdf/zaijidulizhangjin.pdf",
+            "pageNumber": 100
+        },
+        {
+            "size": {
+                "width": 360,
+                "height": 500
+            },
+            "transform": {
+                "shiftX": 750,
+                "shiftY": 0,
+                "scaleX": 0,
+                "scaleY": 0
+            },
+            "id": "page-003",
+            "type": "pdf",
+            "contentUrl": "https://zhenqiang.li/pdf/zaijidulizhangjin.pdf",
+            "pageNumber": 50
+        }
+    ]
+}
