@@ -36,8 +36,10 @@ function Stroke(json) {
         this.id = `stroke-${Date.now()}`;
     }
     this.points = [];
-    for (let i = 0; i < json.points.length; i++) {
-        this.points.push(new Point(json.points[i]));
+    if (json.points) {
+        for (let i = 0; i < json.points.length; i++) {
+            this.points.push(new Point(json.points[i]));
+        }
     }
 }
 
@@ -48,8 +50,10 @@ function Writing(json) {
         this.id = `writing-${Date.now()}`;
     }
     this.strokes = [];
-    for (let i = 0; i < json.strokes.length; i++) {
-        this.strokes.push(new Stroke(this.strokes[i]));
+    if (json.strokes) {
+        for (let i = 0; i < json.strokes.length; i++) {
+            this.strokes.push(new Stroke(this.strokes[i]));
+        }
     }
 }
 

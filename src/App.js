@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import './App.css';
-import Page from './Page';
 import MsApi, {msApiUploadFile, msApiUpdateFile, msApiDownloadFile} from './MsApi';
 import {RootPath} from './AppState';
 import PdfjsWrapper from './PdfjsWrapper';
 import * as Model from './Model';
 import Board from './Board';
+import 'pepjs'
+
 var defaultBoard = require('./defaultBoard.json');
 
 class App extends Component {

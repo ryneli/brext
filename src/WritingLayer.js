@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as Model from './Model';
 import './WritingLayer.css';
+import 'pepjs'
 
 class Drawable {
     constructor(targetSvg) {
@@ -47,88 +48,9 @@ class WritingLayer extends Component {
         this.writing = new Model.Writing({});
     }
 
-    getTouchType(inType) {
-        switch(inType) {
-            case 'direct':
-                return 'touch';
-            case 'stylus':
-                return 'pen';
-            default:
-                return inType;
-        }
-    }
-
-    initPointerListeners(element) {
-        element.addEventListener("touchstart", (e) => {
-            console.log('touchstart %o', e);
-            const rect = element.getBoundingClientRect();
-            const touch = e.touches[0];
-            console.log('WritingLayer#touchStart $o', point);
-            this.startAction(
-                touch.clientX - rect.left, 
-                touch.clientY - rect.top, 
-                this.getTouchType(touch.touchType));
-            e.preventDefault();
-            e.stopPropagation();
-        });
-        element.addEventListener("touchmove", (e) => {
-            const rect = element.getBoundingClientRect();
-            const touch = e.touches[0];
-            this.updateAction(
-                touch.clientX - rect.left, 
-                touch.clientY - rect.top, 
-                this.getTouchType(touch.touchType));
-            e.preventDefault();
-            e.stopPropagation();
-        });
-        element.addEventListener("touchend", (e) => {
-            const rect = element.getBoundingClientRect();
-            const touch = e.touches[0];
-            this.endAction(-1, -1, 'unknown');
-            e.preventDefault();
-            e.stopPropagation();
-        });
-        element.addEventListener("mousedown", (e) => {
-            const rect = element.getBoundingClientRect();
-            this.startAction(e.clientX - rect.left, e.clientY - rect.top, 'mouse');
-            e.preventDefault();
-            e.stopPropagation();
-        });
-        element.addEventListener("mousemove", (e) => {
-            const rect = element.getBoundingClientRect();
-            this.updateAction(e.clientX - rect.left, e.clientY - rect.top, 'mouse');
-            e.preventDefault();
-            e.stopPropagation();
-        });
-        element.addEventListener("mouseup", (e) => {
-            const rect = element.getBoundingClientRect();
-            this.endAction(e.clientX - rect.left, e.clientY - rect.top, 'mouse');
-            e.preventDefault();
-            e.stopPropagation();
-        });
-        element.addEventListener("pointerdown", (e) => {
-            console.log('WL#pointerDown %o %o', element, e)
-            const rect = element.getBoundingClientRect();
-            this.startAction(e.clientX - rect.left, e.clientY - rect.top, e.pointerType);
-            e.preventDefault();
-            e.stopPropagation();
-        });
-        element.addEventListener("pointermove", (e) => {
-            const rect = element.getBoundingClientRect();
-            this.updateAction(e.clientX - rect.left, e.clientY - rect.top, e.pointerType);
-            e.preventDefault();
-            e.stopPropagation();
-        });
-        element.addEventListener("pointerup", (e) => {
-            const rect = element.getBoundingClientRect();
-            this.endAction(e.clientX - rect.left, e.clientY - rect.top, e.pointerType);
-            e.preventDefault();
-            e.stopPropagation();
-        });
-    }
-
     startAction(x, y, touchType) {
-        if (touchType !== 'touch') {
+        console.log('WL#startAction %o %o %o', x, y, touchType);
+        if (touchType === 'touch') {
             if (this.currentActioner) {
                 this.currentActioner.startAction(x, y);
             }
@@ -140,21 +62,48 @@ class WritingLayer extends Component {
         }
     }
     endAction(x, y, touchType) {
+        console.log('WL#endAction %o %o %o', x, y, touchType);
         if (this.currentActioner) {
             this.currentActioner.endAction(x, y);
         }
     }
 
+    onPointerDown(e) {
+        console.log('WL#pointerDown %o %o', this.element, e)
+        const rect = this.element.getBoundingClientRect();
+        this.startAction(e.clientX - rect.left, e.clientY - rect.top, e.pointerType);
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    onPointerMove(e) {
+        const rect = this.element.getBoundingClientRect();
+        this.updateAction(e.clientX - rect.left, e.clientY - rect.top, e.pointerType);
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    onPointerUp(e) {
+        console.log('WL#pointerUp %o %o', this.element, e)
+        const rect = this.element.getBoundingClientRect();
+        this.endAction(e.clientX - rect.left, e.clientY - rect.top, e.pointerType);
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
     componentDidMount() {
         console.log('WritingLayer#componentDidMount %o', this.writingCanvas.current);
-        this.initPointerListeners(this.writingCanvas.current);
-        this.currentActioner = new Drawable(this.writingCanvas.current);
+        this.element = this.writingCanvas.current;
+        this.currentActioner = new Drawable(this.element);
     }
 
     render() {
         return (
         <div style={{width: '100%', height: '100%'}}>
-            <svg ref={this.writingCanvas}  style={{width: '100%', height: '100%'}}></svg>
+            <svg ref={this.writingCanvas}  style={{width: '100%', height: '100%'}} touch-action="none"
+                onPointerDown={this.onPointerDown.bind(this)}
+                onPointerMove={this.onPointerMove.bind(this)}
+                onPointerUp={this.onPointerUp.bind(this)}></svg>
         </div>);
     }
 }
