@@ -50,7 +50,7 @@ class WritingLayer extends Component {
 
     startAction(x, y, touchType) {
         console.log('WL#startAction %o %o %o', x, y, touchType);
-        if (touchType === 'touch') {
+        if (touchType !== 'touch') {
             if (this.currentActioner) {
                 this.currentActioner.startAction(x, y);
             }
