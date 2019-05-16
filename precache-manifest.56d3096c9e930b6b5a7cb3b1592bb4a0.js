@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "585c323a6ae776fcd99257d31dffd26d",
+    "revision": "f85b7e366aff2329f704fa37ec2bb8dd",
     "url": "/brext/index.html"
   },
   {
-    "revision": "8fe58abcd1e038e2cacf",
+    "revision": "52065b9f38a13438be37",
     "url": "/brext/static/css/main.ff0be439.chunk.css"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/brext/static/js/2.4107f795.chunk.js"
   },
   {
-    "revision": "8fe58abcd1e038e2cacf",
-    "url": "/brext/static/js/main.a72c2c2f.chunk.js"
+    "revision": "52065b9f38a13438be37",
+    "url": "/brext/static/js/main.913bfc69.chunk.js"
   },
   {
     "revision": "b9f46a6c533bd06a40a9",
