@@ -21,12 +21,6 @@ class App extends Component {
 
     this.board = new Model.Board(defaultBoard);
   }
-
-  loadPage() {
-    this.state.pdfjsWrapper.getPageAsImg('https://zhenqiang.li/pdf/zaijidulizhangjin.pdf', this.state.current).then((canvas) => {
-      this.setState({canvas: canvas});
-    });
-  }
   
   handleScaleChange(e) {
     console.log('App#handleScaleChange %o', e.target.value);
@@ -61,7 +55,7 @@ class App extends Component {
       return (
         <div className="App">
           <Board data={this.board}></Board>
-          <div style={{position: "absolute", top: '0px', left: '0px'}}>
+          <div style={{position: "fixed", top: '0px', left: '0px'}}>
             <input 
               type="text" 
               value={this.board.viewport.transform.scaleX} 
