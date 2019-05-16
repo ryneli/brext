@@ -25,8 +25,8 @@ function Point(json) {
         this.t = Date.now();
     }
     this.pressure = json.pressure;
-    this.altitude = json.altitude;
-    this.azimuth = json.azimuth;
+    this.tiltX = json.tiltX;
+    this.tiltY = json.tiltY;
 }
 
 function Stroke(json) {
@@ -61,7 +61,7 @@ function Page(json) {
     if (json.id) {
         this.id = json.id;
     } else {
-        this.id = `page-${Date.now()}`;
+        this.id = `page-${Date.now()}-${json.pageNumber}`;
     }
     this.size = new Size(json.size);
     this.transform = new Transform(json.transform);
@@ -72,6 +72,21 @@ function Page(json) {
         this.writing = new Writing(json.writing);
     }
     this.cachedImg = json.cachedImg;
+}
+
+function Book(json) {
+    if (json.id) {
+        this.id = json.id;
+    } else {
+        this.id = `book-${Date.now()}`;
+    }
+    this.currentPageNumber = json.currentPageNumber;
+    this.pages = [];
+    if (json.pages) {
+        for (let i = 0; i < json.pages; i++) {
+            this.pages.push(new Page(json.pages[i]));
+        }
+    }
 }
 
 function Viewport(json) {
@@ -89,12 +104,18 @@ function Board(json) {
     if (json.writing) {
         this.writing = new Writing(json.writing);
     }
+    this.pages = [];
     if (json.pages) {
-        this.pages = [];
         for (let i = 0; i < json.pages.length; i++) {
             this.pages.push(json.pages[i]);
         }
     }
+    this.books = [];
+    if (json.books) {
+        for (let i = 0; i < json.books.length; i++) {
+            this.books.push(json.books[i]);
+        }
+    }
 }
 
-export {Point, Stroke, Writing, Page, Board};
+export {Point, Stroke, Writing, Page, Board, Book};

@@ -17,6 +17,10 @@ class Drawable {
         this.d = '';
     }
 
+    componentDidUpdate() {
+        console.log('WL#componentDidUpdate');
+    }
+
     startAction(x, y) {
         console.log('Drawable#startAction (%o, %o)', x, y);
         this.initPath();
@@ -46,47 +50,71 @@ class WritingLayer extends Component {
         this.writingCanvas = React.createRef();
         this.currentActioner = null;
         this.writing = new Model.Writing({});
+        this.currentStroke = new Model.Stroke({});
     }
 
     startAction(x, y, touchType) {
-        console.log('WL#startAction %o %o %o', x, y, touchType);
         if (touchType !== 'touch') {
             if (this.currentActioner) {
                 this.currentActioner.startAction(x, y);
             }
         }
     }
+
     updateAction(x, y, touchType) {
         if (this.currentActioner) {
             this.currentActioner.updateAction(x, y);
         }
     }
+    
     endAction(x, y, touchType) {
-        console.log('WL#endAction %o %o %o', x, y, touchType);
         if (this.currentActioner) {
             this.currentActioner.endAction(x, y);
         }
     }
 
-    onPointerDown(e) {
-        console.log('WL#pointerDown %o %o', this.element, e)
+    /**
+     * 
+     * @param {PointerEvent} e 
+     */
+    getPoint(e) {
         const rect = this.element.getBoundingClientRect();
-        this.startAction(e.clientX - rect.left, e.clientY - rect.top, e.pointerType);
+        const point = {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+            t: Date.now(),
+            pressure: e.force,
+            tiltX: e.tiltX,
+            tiltY: e.tiltY,
+        };
+        return point;
+    }
+
+    onPointerDown(e) {
+        if (this.currentStroke.points.length > 0) {
+            this.writing.strokes.push(this.currentStroke);
+            console.log('WL#onPointerDown %o', this.writing);
+        }
+        this.currentStroke = new Model.Stroke({});
+        const point = this.getPoint(e);
+        this.currentStroke.points.push(point);
+        this.startAction(point.x, point.y, e.pointerType);
         e.preventDefault();
         e.stopPropagation();
     }
 
     onPointerMove(e) {
-        const rect = this.element.getBoundingClientRect();
-        this.updateAction(e.clientX - rect.left, e.clientY - rect.top, e.pointerType);
+        const point = this.getPoint(e);
+        this.currentStroke.points.push(point);
+        this.updateAction(point.x, point.y, e.pointerType);
         e.preventDefault();
         e.stopPropagation();
     }
 
     onPointerUp(e) {
-        console.log('WL#pointerUp %o %o', this.element, e)
-        const rect = this.element.getBoundingClientRect();
-        this.endAction(e.clientX - rect.left, e.clientY - rect.top, e.pointerType);
+        const point = this.getPoint(e);
+        this.currentStroke.points.push(point);
+        this.endAction(point.x, point.y, e.pointerType);
         e.preventDefault();
         e.stopPropagation();
     }

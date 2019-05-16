@@ -7,7 +7,6 @@ import WritingLayer from './WritingLayer';
 class Board extends Component {
     render() {
         const data = this.props.data;
-        console.log('Board#render %o', data);
         return (
             <div>
                 {data.pages.map(function(page) {

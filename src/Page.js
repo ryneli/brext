@@ -52,6 +52,7 @@ class Page extends Component {
     }
 
     render() {
+        console.log('Page#useEffect %o', JSON.stringify(this.props.data));
         if (this.state.canvas) {
             return (
                 <div style={{
