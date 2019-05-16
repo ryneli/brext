@@ -13,7 +13,7 @@ class Drawable {
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         this.path.setAttribute('stroke', 'black');
         this.path.setAttribute('fill', 'none');
-        this.path.setAttribute('stroke-width', '2');
+        this.path.setAttribute('stroke-width', '0.2');
         this.d = '';
     }
 
@@ -83,19 +83,23 @@ class WritingLayer extends Component {
             x: e.clientX - rect.left,
             y: e.clientY - rect.top,
             t: Date.now(),
-            pressure: e.force,
+            pressure: e.pressure,
             tiltX: e.tiltX,
-            tiltY: e.tiltY,
+            tiltY: e.tiltY
         };
         return point;
     }
 
-    onPointerDown(e) {
+    tryUpdateWriting() {
         if (this.currentStroke.points.length > 0) {
             this.writing.strokes.push(this.currentStroke);
             console.log('WL#onPointerDown %o', this.writing);
         }
         this.currentStroke = new Model.Stroke({});
+    }
+
+    onPointerDown(e) {
+        this.tryUpdateWriting();
         const point = this.getPoint(e);
         this.currentStroke.points.push(point);
         this.startAction(point.x, point.y, e.pointerType);
@@ -114,6 +118,7 @@ class WritingLayer extends Component {
     onPointerUp(e) {
         const point = this.getPoint(e);
         this.currentStroke.points.push(point);
+        this.tryUpdateWriting();
         this.endAction(point.x, point.y, e.pointerType);
         e.preventDefault();
         e.stopPropagation();
