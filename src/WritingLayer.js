@@ -13,7 +13,7 @@ class Drawable {
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         this.path.setAttribute('stroke', 'black');
         this.path.setAttribute('fill', 'none');
-        this.path.setAttribute('stroke-width', '0.4');
+        this.path.setAttribute('stroke-width', '1');
         this.d = '';
     }
 
@@ -123,10 +123,20 @@ class WritingLayer extends Component {
         e.stopPropagation();
     }
 
+    componentCleanup() {
+        console.log('WritingLayer#componentCleanup %o', this.writing);
+        localStorage.setItem('test', JSON.stringify(this.writing));
+    }
+
     componentDidMount() {
         console.log('WritingLayer#componentDidMount %o', this.writingCanvas.current);
         this.element = this.writingCanvas.current;
         this.currentActioner = new Drawable(this.element);
+        window.addEventListener('beforeunload', this.componentCleanup.bind(this));
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('beforeunload', this.componentCleanup.bind(this));
     }
 
     render() {

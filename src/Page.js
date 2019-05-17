@@ -67,7 +67,7 @@ class Page extends Component {
                     backgroundPosition: 'center', 
                     backgroundSize: 'contain'}}
                     id={'page' + this.props.data.pageNumber}>
-                    <WritingLayer></WritingLayer>
+                    <WritingLayer scale={this.props.scale}></WritingLayer>
                 </div>
                 );
         } else {
