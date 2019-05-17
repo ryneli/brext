@@ -13,7 +13,7 @@ class Drawable {
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         this.path.setAttribute('stroke', 'black');
         this.path.setAttribute('fill', 'none');
-        this.path.setAttribute('stroke-width', '0.2');
+        this.path.setAttribute('stroke-width', '0.4');
         this.d = '';
     }
 
@@ -31,8 +31,7 @@ class Drawable {
 
     updateAction(x, y) {
         if (this.previousPoint && this.d.startsWith('M')) {
-            this.d = `${this.d} C ${x} ${y} 
-                        ${this.previousPoint.x} ${this.previousPoint.y}
+            this.d = `${this.d} Q ${this.previousPoint.x} ${this.previousPoint.y}
                         ${(x + this.previousPoint.x)/2} ${(y + this.previousPoint.y)/2} `;
             this.path.setAttribute('d', `${this.d}`);
             this.previousPoint = {x, y};
