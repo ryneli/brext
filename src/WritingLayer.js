@@ -49,21 +49,19 @@ function WritingLayer() {
     const [writing, setWriting] = useState(new Model.Writing({}));
     const [currentStroke, setCurrentStroke] = useState(new Model.Stroke({}));
 
-    function startAction(x, y, touchType) {
-        if (touchType !== 'touch') {
-            if (currentActioner) {
-                currentActioner.startAction(x, y);
-            }
+    function startAction(x, y) {
+        if (currentActioner) {
+            currentActioner.startAction(x, y);
         }
     }
 
-    function updateAction(x, y, touchType) {
+    function updateAction(x, y) {
         if (currentActioner) {
             currentActioner.updateAction(x, y);
         }
     }
     
-    function endAction(x, y, touchType) {
+    function endAction(x, y) {
         if (currentActioner) {
             currentActioner.endAction(x, y);
         }
@@ -96,32 +94,39 @@ function WritingLayer() {
     }
 
     function onPointerDown(e) {
-        tryUpdateWriting();
-        const point = getPoint(e);
-        currentStroke.points.push(point);
-        setCurrentStroke(currentStroke);
-        startAction(point.x, point.y, e.pointerType);
-        e.preventDefault();
-        e.stopPropagation();
+        console.log('WL#onPointerDown %o', e.pointerType);
+        if (e.pointerType === 'pen') {
+            tryUpdateWriting();
+            const point = getPoint(e);
+            currentStroke.points.push(point);
+            setCurrentStroke(currentStroke);
+            startAction(point.x, point.y);
+            e.preventDefault();
+            e.stopPropagation();
+        }
     }
 
     function onPointerMove(e) {
-        const point = getPoint(e);
-        currentStroke.points.push(point);
-        setCurrentStroke(currentStroke);
-        updateAction(point.x, point.y, e.pointerType);
-        e.preventDefault();
-        e.stopPropagation();
+        if (e.pointerType === 'pen') {
+            const point = getPoint(e);
+            currentStroke.points.push(point);
+            setCurrentStroke(currentStroke);
+            updateAction(point.x, point.y);
+            e.preventDefault();
+            e.stopPropagation();
+        }
     }
 
     function onPointerUp(e) {
-        const point = getPoint(e);
-        currentStroke.points.push(point);
-        setCurrentStroke(currentStroke);
-        tryUpdateWriting();
-        endAction(point.x, point.y, e.pointerType);
-        e.preventDefault();
-        e.stopPropagation();
+        if (e.pointerType === 'pen') {
+            const point = getPoint(e);
+            currentStroke.points.push(point);
+            setCurrentStroke(currentStroke);
+            tryUpdateWriting();
+            endAction(point.x, point.y);
+            e.preventDefault();
+            e.stopPropagation();
+        }
     }
 
     useEffect(() => {
@@ -136,7 +141,7 @@ function WritingLayer() {
         return () => {
             window.removeEventListener('beforeunload', componentCleanup);
         };
-    }, [writing, writingCanvas]);
+    }, []);
 
     return (
         <div style={{width: '100%', height: '100%'}}>

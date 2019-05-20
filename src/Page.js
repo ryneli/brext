@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import PdfjsWrapper from './PdfjsWrapper';
 import WritingLayer from './WritingLayer';
+import Gesture from './Gesture';
 import './Page.css';
 
 function Page(props) {
     const pdfjsWrapper = new PdfjsWrapper();
     const [canvas, setCanvas] = useState(null);
-
-    
 
     useEffect(() => {
         console.log('Page#componentDidMount');
@@ -15,7 +14,12 @@ function Page(props) {
             props.data.pageNumber).then((canvas) => {
                 setCanvas(canvas);
             });
-    }, [pdfjsWrapper, props.data.contentUrl, props.data.pageNumber]);
+    }, []);
+
+    function onDoubleTap(e) {
+        console.log('Page#onDoubleTap %o', e);
+    }
+    const gesture = new Gesture({onDoubleTap});
 
     
     if (canvas) {
@@ -31,7 +35,10 @@ function Page(props) {
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center', 
                 backgroundSize: 'contain'}}
-                id={'page' + props.data.pageNumber}>
+                id={'page' + props.data.pageNumber}
+                onPointerDown={gesture.onPointerDown.bind(gesture)}
+                onPointerMove={gesture.onPointerMove.bind(gesture)}
+                onPointerUp={gesture.onPointerUp.bind(gesture)}>
                 <WritingLayer scale={props.scale}></WritingLayer>
             </div>
             );
