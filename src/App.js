@@ -47,7 +47,7 @@ function App() {
     return (
       <div className="App">
         <Board data={board}></Board>
-        <div style={{position: "fixed", top: '0px', left: '0px'}}>
+        <div style={{position: "fixed", top: '0px', left: '0px', zIndex: 99}}>
           <input 
             type="text" 
             value={scale} 
