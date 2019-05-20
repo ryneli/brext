@@ -5,11 +5,6 @@ var PDFJS = require('pdfjs-dist');
  */
 PDFJS.GlobalWorkerOptions.workerSrc = RootPath + 'pdf.worker.js';
 
-var url = 'https://zhenqiang.li/pdf/zaijidulizhangjin.pdf',
-    targetElement = null,
-    pageRendering = false,
-    currentNumber = 0;
-
 class PdfjsWrapper {
     getPdfInfo(url) {}
 

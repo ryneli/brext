@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as Model from './Model';
 import './WritingLayer.css';
 import 'pepjs'
@@ -43,32 +43,29 @@ class Drawable {
     }
 }
 
-class WritingLayer extends Component {
-    constructor(props) {
-        super(props);
-        this.writingCanvas = React.createRef();
-        this.currentActioner = null;
-        this.writing = new Model.Writing({});
-        this.currentStroke = new Model.Stroke({});
-    }
+function WritingLayer() {
+    const writingCanvas = React.createRef();
+    const [currentActioner, setCurrentActioner] = useState(null);
+    const [writing, setWriting] = useState(new Model.Writing({}));
+    const [currentStroke, setCurrentStroke] = useState(new Model.Stroke({}));
 
-    startAction(x, y, touchType) {
+    function startAction(x, y, touchType) {
         if (touchType !== 'touch') {
-            if (this.currentActioner) {
-                this.currentActioner.startAction(x, y);
+            if (currentActioner) {
+                currentActioner.startAction(x, y);
             }
         }
     }
 
-    updateAction(x, y, touchType) {
-        if (this.currentActioner) {
-            this.currentActioner.updateAction(x, y);
+    function updateAction(x, y, touchType) {
+        if (currentActioner) {
+            currentActioner.updateAction(x, y);
         }
     }
     
-    endAction(x, y, touchType) {
-        if (this.currentActioner) {
-            this.currentActioner.endAction(x, y);
+    function endAction(x, y, touchType) {
+        if (currentActioner) {
+            currentActioner.endAction(x, y);
         }
     }
 
@@ -76,8 +73,8 @@ class WritingLayer extends Component {
      * 
      * @param {PointerEvent} e 
      */
-    getPoint(e) {
-        const rect = this.element.getBoundingClientRect();
+    function getPoint(e) {
+        const rect = writingCanvas.current.getBoundingClientRect();
         const point = {
             x: e.clientX - rect.left,
             y: e.clientY - rect.top,
@@ -89,65 +86,65 @@ class WritingLayer extends Component {
         return point;
     }
 
-    tryUpdateWriting() {
-        if (this.currentStroke.points.length > 0) {
-            this.writing.strokes.push(this.currentStroke);
-            console.log('WL#onPointerDown %o', this.writing);
+    function tryUpdateWriting() {
+        if (currentStroke.points.length > 0) {
+            writing.strokes.push(currentStroke);
+            setWriting(writing);
+            console.log('WL#tryUpdateWriting %o', writing);
         }
-        this.currentStroke = new Model.Stroke({});
+        setCurrentStroke(new Model.Stroke({}));
     }
 
-    onPointerDown(e) {
-        this.tryUpdateWriting();
-        const point = this.getPoint(e);
-        this.currentStroke.points.push(point);
-        this.startAction(point.x, point.y, e.pointerType);
+    function onPointerDown(e) {
+        tryUpdateWriting();
+        const point = getPoint(e);
+        currentStroke.points.push(point);
+        setCurrentStroke(currentStroke);
+        startAction(point.x, point.y, e.pointerType);
         e.preventDefault();
         e.stopPropagation();
     }
 
-    onPointerMove(e) {
-        const point = this.getPoint(e);
-        this.currentStroke.points.push(point);
-        this.updateAction(point.x, point.y, e.pointerType);
+    function onPointerMove(e) {
+        const point = getPoint(e);
+        currentStroke.points.push(point);
+        setCurrentStroke(currentStroke);
+        updateAction(point.x, point.y, e.pointerType);
         e.preventDefault();
         e.stopPropagation();
     }
 
-    onPointerUp(e) {
-        const point = this.getPoint(e);
-        this.currentStroke.points.push(point);
-        this.tryUpdateWriting();
-        this.endAction(point.x, point.y, e.pointerType);
+    function onPointerUp(e) {
+        const point = getPoint(e);
+        currentStroke.points.push(point);
+        setCurrentStroke(currentStroke);
+        tryUpdateWriting();
+        endAction(point.x, point.y, e.pointerType);
         e.preventDefault();
         e.stopPropagation();
     }
 
-    componentCleanup() {
-        console.log('WritingLayer#componentCleanup %o', this.writing);
-        localStorage.setItem('test', JSON.stringify(this.writing));
-    }
+    useEffect(() => {
+        function componentCleanup() {
+            console.log('WritingLayer#componentCleanup %o', writing);
+            localStorage.setItem('test', JSON.stringify(writing));
+        }
 
-    componentDidMount() {
-        console.log('WritingLayer#componentDidMount %o', this.writingCanvas.current);
-        this.element = this.writingCanvas.current;
-        this.currentActioner = new Drawable(this.element);
-        window.addEventListener('beforeunload', this.componentCleanup.bind(this));
-    }
+        console.log('WritingLayer#componentDidMount %o', writingCanvas.current);
+        setCurrentActioner(new Drawable(writingCanvas.current))
+        window.addEventListener('beforeunload', componentCleanup);
+        return () => {
+            window.removeEventListener('beforeunload', componentCleanup);
+        };
+    }, [writing, writingCanvas]);
 
-    componentWillUnmount() {
-        window.removeEventListener('beforeunload', this.componentCleanup.bind(this));
-    }
-
-    render() {
-        return (
+    return (
         <div style={{width: '100%', height: '100%'}}>
-            <svg ref={this.writingCanvas}  style={{width: '100%', height: '100%'}} touch-action="none"
-                onPointerDown={this.onPointerDown.bind(this)}
-                onPointerMove={this.onPointerMove.bind(this)}
-                onPointerUp={this.onPointerUp.bind(this)}></svg>
+            <svg ref={writingCanvas}  style={{width: '100%', height: '100%'}} touch-action="none"
+                onPointerDown={onPointerDown}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}></svg>
         </div>);
-    }
 }
 
 export default WritingLayer;

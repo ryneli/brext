@@ -1,79 +1,42 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import PdfjsWrapper from './PdfjsWrapper';
 import WritingLayer from './WritingLayer';
 import './Page.css';
 
-class Page extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            canvas: null,
-            pdfjsWrapper: new PdfjsWrapper(),
-        }
-    }
-    /**
-     * componentDidMount is invoked after first rendering and before any setState
-     */
-    componentDidMount() {
+function Page(props) {
+    const pdfjsWrapper = new PdfjsWrapper();
+    const [canvas, setCanvas] = useState(null);
+
+    
+
+    useEffect(() => {
         console.log('Page#componentDidMount');
-        this.loadPage();
-    }
-
-    /**
-     * From https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#invoking-external-callbacks.
-     * 
-     * it is unsafe to use componentWillUpdate for this purpose in async mode, because the external 
-     * callback might get called multiple times for a single update. Instead, the componentDidUpdate 
-     * lifecycle should be used since it is guaranteed to be invoked only once per update.
-     * 
-     * componentDidUpdate is invoked right after rendering.
-     */
-    componentDidUpdate() {
-        console.log('Page#componentDidUpdate');
-    }
-
-
-    componentWillUnmount() {
-        console.log('Page#componentWillUnmount');
-    }
-
-    /**
-     * This is unsafe too. It may be called multiple times.
-     */
-    componentWillReceiveProps() {
-        console.log('Page#componentWillReceiveProps');
-    }
-
-    loadPage() {
-        this.state.pdfjsWrapper.getPageAsImg(this.props.data.contentUrl, 
-            this.props.data.pageNumber).then((canvas) => {
-                this.setState({canvas: canvas});
+        pdfjsWrapper.getPageAsImg(props.data.contentUrl, 
+            props.data.pageNumber).then((canvas) => {
+                setCanvas(canvas);
             });
-    }
+    }, [pdfjsWrapper, props.data.contentUrl, props.data.pageNumber]);
 
-    render() {
-        console.log('Page#useEffect %o', JSON.stringify(this.props.data));
-        if (this.state.canvas) {
-            return (
-                <div style={{
-                    position: 'absolute',
-                    top: this.props.data.transform.shiftY * this.props.scale, 
-                    left: this.props.data.transform.shiftX * this.props.scale,
-                    width: this.props.data.size.width * this.props.scale, 
-                    height: this.props.data.size.height * this.props.scale, 
-                    boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                    backgroundImage: `url("${this.state.canvas.toDataURL('image/png')}")`,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center', 
-                    backgroundSize: 'contain'}}
-                    id={'page' + this.props.data.pageNumber}>
-                    <WritingLayer scale={this.props.scale}></WritingLayer>
-                </div>
-                );
-        } else {
-            return (<div>loading</div>);
-        }
-        
+    
+    if (canvas) {
+        return (
+            <div style={{
+                position: 'absolute',
+                top: props.data.transform.shiftY * props.scale, 
+                left: props.data.transform.shiftX * props.scale,
+                width: props.data.size.width * props.scale, 
+                height: props.data.size.height * props.scale, 
+                boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                backgroundImage: `url("${canvas.toDataURL('image/png')}")`,
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center', 
+                backgroundSize: 'contain'}}
+                id={'page' + props.data.pageNumber}>
+                <WritingLayer scale={props.scale}></WritingLayer>
+            </div>
+            );
+    } else {
+        return (<div>loading</div>);
     }
 }
 
