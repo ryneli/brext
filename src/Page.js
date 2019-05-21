@@ -15,9 +15,9 @@ function Page(props) {
         zIndex: 1,
         alterTop: '0px',
         alterLeft: '0px',
-        alterWidth: '100%',
-        alterHeight: '100%',
-        alterZIndex: 100,
+        alterWidth: `100vw`,
+        alterHeight: `100vh`,
+        alterZIndex: 98,
     });
 
     useEffect(() => {
@@ -60,7 +60,7 @@ function Page(props) {
                     backgroundColor: '#6DB3F2',
                     backgroundImage: `url("${canvas.toDataURL('image/png')}")`,
                     backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center', 
+                    backgroundPosition: 'center center', 
                     backgroundSize: 'contain'}}
                     id={'page' + props.data.pageNumber}
                     onPointerDown={gesture.onPointerDown.bind(gesture)}
