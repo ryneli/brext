@@ -1,7 +1,7 @@
 const EVENT_INTERVAL = 250;
 const TIME_GAP = {
-    MIN: 150,
-    MAX: 200
+    MIN: 250,
+    MAX: 300,
 };
 const DISTANCE_GAP = {
     MIN: 10,
