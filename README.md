@@ -1,3 +1,14 @@
+# BrExt (Brain Extention)
+## TODOs
+### Double tap page to toggle between overview/fullscreen
+### Add a nav button with move viewport handle
+### Use CSS transform instead of top/left position
+https://www.paulirish.com/2012/why-moving-elements-with-translate-is-better-than-posabs-topleft/
+
+## Resources
+### http://event-timing.glitch.me/ from @jaffathecake to show browsers sync/coalesce events
+
+# From [Create React App](https://github.com/facebook/create-react-app).
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
@@ -69,3 +80,4 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 
 ## How to deploy to Github Pages
 https://github.com/gitname/react-gh-pages
+
