@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PdfjsWrapper from './PdfjsWrapper';
 import WritingLayer from './WritingLayer';
-import Gesture from './Gesture';
+import Gesture, { SWIPE_DIRECTION } from './Gesture';
 import './Page.css';
 
 function Page(props) {
@@ -19,14 +19,15 @@ function Page(props) {
         alterHeight: `100vh`,
         alterZIndex: 98,
     });
+    const [pageNumber, setPageNumber] = useState(props.data.pageNumber);
 
     useEffect(() => {
         console.log('Page#componentDidMount');
         pdfjsWrapper.getPageAsImg(props.data.contentUrl, 
-            props.data.pageNumber).then((canvas) => {
+            pageNumber).then((canvas) => {
                 setCanvas(canvas);
             });
-    }, []);
+    }, [pageNumber]);
 
     function onDoubleTap(e) {
         console.log('Page#onDoubleTap %o', e);
@@ -44,7 +45,17 @@ function Page(props) {
         }
         setSizeAndTransform(newSizeAndTransform);
     }
-    const gesture = new Gesture({onDoubleTap});
+
+    function onSwipe(direction) {
+        console.log('Page#onSwipe %o', direction);
+        // TODO: check page number limit
+        if (direction === SWIPE_DIRECTION.RIGHT) {
+            setPageNumber(pageNumber-1);
+        } else if (direction === SWIPE_DIRECTION.LEFT) {
+            setPageNumber(pageNumber+1);
+        }
+    }
+    const gesture = new Gesture({onDoubleTap, onSwipe});
 
     if (canvas) {
         return (

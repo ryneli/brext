@@ -1,12 +1,14 @@
 const EVENT_INTERVAL = 250;
 const TIME_GAP = {
-    MIN: 100,
+    MIN: 150,
     MAX: 200
 };
 const DISTANCE_GAP = {
     MIN: 10,
     MAX: 10,
 };
+const SWIPE_ANGLE = 15;
+const SWIPE_ANGLE_TAN = Math.tan(SWIPE_ANGLE * Math.PI / 180);
 
 function createSsEvent(type, startX, startY, startTime, endX, endY, endTime) {
     return {
@@ -21,12 +23,36 @@ function createSsEvent(type, startX, startY, startTime, endX, endY, endTime) {
 }
 
 // single finger with one pointerDown/pointerUp
+// Single finger Simple gesture
 const SS = {
     TAP: 'tap',
     PRESS: 'press',
     SWIPE: 'swipe',
     DRAG: 'drag',
 };
+
+const SWIPE_DIRECTION = {
+    UNKNOWN: 'unknown',
+    LEFT: 'swipeleft',
+    RIGHT: 'swiperight',
+};
+
+function getDirectionFromSsEvent(ssEvent) {
+    const deltaX = ssEvent.endX - ssEvent.startX;
+    const deltaY = ssEvent.endY - ssEvent.startY;
+
+    if (Math.abs(deltaY/deltaX) <= SWIPE_ANGLE_TAN) {
+        if (deltaX > 0) {
+            return SWIPE_DIRECTION.RIGHT;
+        } else if (deltaX < 0) {
+            return SWIPE_DIRECTION.LEFT;
+        } else {
+            return SWIPE_DIRECTION.UNKNOWN;
+        }
+    } else {
+        return SWIPE_DIRECTION.UNKNOWN;
+    }
+}
 
 /**
  * First phase:
@@ -46,6 +72,7 @@ class Gesture {
         this.onPress = handlers.onPress;
         this.onTap = handlers.onTap;
         this.onDoubleTap = handlers.onDoubleTap;
+        this.onSwipe = handlers.onSwipe;
     }
 
     onEndOfssSequence() {
@@ -64,10 +91,18 @@ class Gesture {
                 if (this.onPress) {
                     this.onPress(ss);
                 }
+                break;
                 case SS.TAP:
                 if (this.onTap) {
                     this.onTap(ss);
                 }
+                break;
+                case SS.SWIPE:
+                if (this.onSwipe) {
+                    const direction = getDirectionFromSsEvent(ss);
+                    this.onSwipe(direction);
+                }
+                break;
                 default:
                 console.log('Gesture#onEndOfssSequence do not know how to handle %o', ss);
             }
@@ -79,7 +114,6 @@ class Gesture {
     }
 
     onPointerDown(e) {
-        console.log('Gesture#onPointerDown %o', e.pointerType);
         this.startTime = Date.now();
         this.startX = e.clientX;
         this.startY = e.clientY;
@@ -105,7 +139,7 @@ class Gesture {
         const endTime = Date.now();
         const distance = Math.pow(e.clientX - this.startX, 2) + Math.pow(e.clientY - this.startY, 2);
         const time = endTime - this.startTime;
-        console.log('Gesture#onPointerUp %o %o', time, distance);
+        
         if (time <= TIME_GAP.MIN && distance <= DISTANCE_GAP.MIN) {
             this.ssQueue.push(createSsEvent(
                 SS.TAP,
@@ -150,4 +184,5 @@ class Gesture {
     }
 }
 
+export {SWIPE_DIRECTION};
 export default Gesture;
